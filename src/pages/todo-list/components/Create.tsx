@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { Todo } from "@/types/todo-types";
 import { CircleCheckBig } from "lucide-react";
 import { useEffect, useState } from "react";
-import { addTodo, updateTodo } from "@/redux/actions/todo-actions";
+import { addTodo, updateTodo } from "@/redux/features/todo-slice";
 
 const CreateTodo = ({
   todo,
