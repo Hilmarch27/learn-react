@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { selectTodosArray } from "@/redux/features/todo-selector";
 import {
   removeTodo,
-  toggleCompleteTodo,
+  updateTodo,
 } from "@/redux/features/todo-slice";
 import { Todo } from "@/types/todo-types";
 import { CircleCheck, Pencil, X } from "lucide-react";
@@ -16,7 +15,7 @@ const ListTodo = ({
   isDone?: boolean;
 }) => {
   const dispatch = useDispatch();
-  const todos = useSelector(selectTodosArray)
+  const todos = useSelector((state:any) => state.todos.todos);
 console.log(todos);
 
   const completeTodos = todos.filter((todo: Todo) => todo.isCompleted);
@@ -30,7 +29,8 @@ console.log(todos);
   };
 
   const handleCompleteTodo = (todo: Todo) => {
-    toggleCompleteTodo(todo.id);
+    const updatedTodo = { ...todo, isCompleted: !todo.isCompleted };
+    dispatch(updateTodo(updatedTodo));
   };
 
   return (
