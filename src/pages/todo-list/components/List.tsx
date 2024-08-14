@@ -1,9 +1,9 @@
-// components/ListTodo.tsx
-
 import { Button } from "@/components/ui/button";
-import { useTodo } from "@/context/todo-context/use-todo";
+import { RootState } from "@/redux/reducers";
 import { Todo } from "@/types/todo-types";
 import { CircleCheck, Pencil, X } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { removeTodo, updateTodo } from "@/redux/actions/todo-actions";
 
 const ListTodo = ({
   setTodo,
@@ -12,34 +12,35 @@ const ListTodo = ({
   setTodo: (todo: Todo) => void;
   isDone?: boolean;
 }) => {
-  const { todos, removeTodo, updateTodo } = useTodo();
-  // Filter todos to show only those that are not completed
-  const completeTodos = todos.filter((todo) => todo.isCompleted === true);
+  const dispatch = useDispatch();
+  const todos = useSelector((state: RootState) => state.todos.todos);
+
+  const completeTodos = todos.filter((todo: Todo) => todo.isCompleted);
 
   const handleRemoveTodo = (todo: Todo) => {
-    removeTodo!(todo);
+    dispatch(removeTodo(todo.id));
   };
 
   const handleUpdateTodo = (todo: Todo) => {
     setTodo(todo);
   };
 
-const handleCompleteTodo = (todo: Todo) => {
-  const updatedTodo = { ...todo, isCompleted: !todo.isCompleted };
-  updateTodo!(updatedTodo);
-};
+  const handleCompleteTodo = (todo: Todo) => {
+    const updatedTodo = { ...todo, isCompleted: !todo.isCompleted };
+    dispatch(updateTodo(updatedTodo));
+  };
 
   return (
     <>
-      {isDone === true ? (
+      {isDone ? (
         <ul>
-          {completeTodos.map((todo) => (
+          {completeTodos.map((todo: Todo) => (
             <li key={todo.id} className="grid grid-cols-2 my-1">
               <div className="flex gap-2">
                 <Button
-                className="text-green-500 border-green-500"
+                  className="text-green-500 border-green-500"
                   onClick={() => handleCompleteTodo(todo)}
-                  type="submit"
+                  type="button"
                   variant="outline"
                   size="icon"
                 >
@@ -50,7 +51,7 @@ const handleCompleteTodo = (todo: Todo) => {
               <div className="flex justify-end gap-2">
                 <Button
                   onClick={() => handleUpdateTodo(todo)}
-                  type="submit"
+                  type="button"
                   variant="outline"
                   size="icon"
                 >
@@ -58,7 +59,7 @@ const handleCompleteTodo = (todo: Todo) => {
                 </Button>
                 <Button
                   onClick={() => handleRemoveTodo(todo)}
-                  type="submit"
+                  type="button"
                   variant="outline"
                   size="icon"
                 >
@@ -70,28 +71,32 @@ const handleCompleteTodo = (todo: Todo) => {
         </ul>
       ) : (
         <ul>
-          {todos.map((todo) => (
+          {todos.map((todo: Todo) => (
             <li key={todo.id} className="grid grid-cols-2 my-1">
               <div className="flex gap-2">
                 <Button
                   className={
-                    todo.isCompleted === false
-                      ? ""
-                      : "text-green-500 border-green-500"
+                    todo.isCompleted ? "text-green-500 border-green-500" : ""
                   }
                   onClick={() => handleCompleteTodo(todo)}
-                  type="submit"
+                  type="button"
                   variant="outline"
                   size="icon"
                 >
                   <CircleCheck className="h-4 w-4" />
                 </Button>
-                <p className={`my-auto ${todo.isCompleted === false ? "" : "line-through"}`}>{todo.title}</p>
+                <p
+                  className={`my-auto ${
+                    todo.isCompleted ? "line-through" : ""
+                  }`}
+                >
+                  {todo.title}
+                </p>
               </div>
               <div className="flex justify-end gap-2">
                 <Button
                   onClick={() => handleUpdateTodo(todo)}
-                  type="submit"
+                  type="button"
                   variant="outline"
                   size="icon"
                 >
@@ -99,7 +104,7 @@ const handleCompleteTodo = (todo: Todo) => {
                 </Button>
                 <Button
                   onClick={() => handleRemoveTodo(todo)}
-                  type="submit"
+                  type="button"
                   variant="outline"
                   size="icon"
                 >
